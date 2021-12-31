@@ -1,8 +1,6 @@
 use itertools::Itertools;
 use linked_hash_map::LinkedHashMap;
 use std::collections::{BTreeMap, HashMap};
-use std::fmt::{Debug, Formatter};
-use std::hash::{Hash, Hasher};
 
 fn main() {
     let map = CaveMap::from_input(include_str!("input.txt"));
@@ -64,9 +62,7 @@ impl CaveMap {
         let mut paths = LinkedHashMap::new();
         paths.insert(
             (
-                MyMap {
-                    m: BTreeMap::from([("start".to_string(), 1u8)]),
-                },
+                BTreeMap::from([("start".to_string(), 1u8)]),
                 "start".to_string(),
             ),
             1usize,
@@ -77,10 +73,10 @@ impl CaveMap {
             for cave in &self.connections[&current_path.1] {
                 if final_move(cave) {
                     path_count += count;
-                } else if valid_move(cave, &current_path.0.m) {
+                } else if valid_move(cave, &current_path.0) {
                     let mut continued_path = current_path.clone();
                     if cave.chars().all(|c| c.is_lowercase()) {
-                        *continued_path.0.m.entry(cave.to_string()).or_default() += 1;
+                        *continued_path.0.entry(cave.to_string()).or_default() += 1;
                     }
                     continued_path.1 = cave.clone();
                     if paths.contains_key(&continued_path) {
@@ -93,22 +89,5 @@ impl CaveMap {
         }
 
         path_count
-    }
-}
-
-#[derive(Clone, Eq, PartialEq)]
-struct MyMap<K, V> {
-    m: BTreeMap<K, V>,
-}
-
-impl<K: Hash, V: Hash> Hash for MyMap<K, V> {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.m.iter().for_each(|x| x.hash(state))
-    }
-}
-
-impl<K: Debug, V: Debug> Debug for MyMap<K, V> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        self.m.fmt(f)
     }
 }
