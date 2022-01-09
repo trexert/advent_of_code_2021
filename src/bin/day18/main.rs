@@ -64,14 +64,6 @@ impl SnailNumber {
         }
     }
 
-    pub fn iter(&self) -> SnailIter {
-        self.value.iter()
-    }
-
-    pub fn iter_mut(&mut self) -> SnailIterMut {
-        self.value.iter_mut()
-    }
-
     fn check_for_explosions(&mut self) -> bool {
         let mut made_change = false;
         let mut current_node = self.value.as_mut();
@@ -283,12 +275,6 @@ impl SnailNode {
 
     fn iter_mut(&mut self) -> SnailIterMut {
         SnailIterMut {
-            next_node: Some(self),
-        }
-    }
-
-    fn iter(&self) -> SnailIter {
-        SnailIter {
             next_node: Some(self),
         }
     }
